@@ -101,6 +101,41 @@ class YOLO_Pred():
 
         return image
 
+    def get_detections(self, image):
+        row, col, d = image.shape
+        max_rc = max(row, col)
+        input_image = np.zeros((max_rc, max_rc, 3), dtype=np.uint8)
+        input_image[0:row, 0:col] = image
+        INPUT_WH_YOLO = 640
+        blob = cv2.dnn.blobFromImage(input_image, 1/255, (INPUT_WH_YOLO, INPUT_WH_YOLO), swapRB=True, crop=False)
+        self.yolo.setInput(blob)
+        preds = self.yolo.forward()
+
+        detections = preds[0]
+        boxes = []
+        # confidences = []
+        # classes = []
+
+        image_w, image_h = input_image.shape[:2]
+        x_factor = image_w / INPUT_WH_YOLO
+        y_factor = image_h / INPUT_WH_YOLO
+
+        for i in range(len(detections)):
+            row = detections[i]
+            confidence = row[4]
+            if confidence > 0.4:
+                class_score = row[5:].max()
+                class_id = row[5:].argmax()
+                if class_score > 0.25:
+                    cx, cy, w, h = row[0:4]
+                    left = int((cx - 0.5 * w) * x_factor)
+                    top = int((cy - 0.5 * h) * y_factor)
+                    width = int(w * x_factor)
+                    height = int(h * y_factor)
+                    boxes.append([left, top, width, height, confidence, class_id])
+
+        return boxes
+
 
     def generate_colors(self,ID):
         np.random.seed(10)

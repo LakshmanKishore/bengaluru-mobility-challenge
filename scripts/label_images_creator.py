@@ -3,9 +3,9 @@ import os
 import numpy as np
 
 # Define the input video path
-input_video_path = '../hackathon-info/videos/Devasandra_Sgnl_JN_FIX_1_time_2024-05-14T07_30_02_000.mp4'
-output_folder = '../hackathon-info/label_images'
-frame_interval = 100  # Extract every 50th frame
+input_video_path = '../hackathon-info/videos/Stn_HD_1_time_2024-05-14T07_30_02_001.mp4'
+output_folder = '../hackathon-info/stn_hd_label_images'
+frame_interval = 30  # Extract every 50th frame
 motion_threshold = 500000  # Threshold for detecting motion
 
 # Create the output folder if it doesn't exist
@@ -36,7 +36,7 @@ while success:
 
             if diff_sum > motion_threshold:
                 # Save the frame as an image if motion is detected
-                output_image_path = os.path.join(output_folder, f'frame_{frame_index}.jpg')
+                output_image_path = os.path.join(output_folder, f'stn_hd_frame_{frame_index}.jpg')
                 cv2.imwrite(output_image_path, frame)
                 saved_frame_count += 1
 
